@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/golang/protobuf v1.5.2
+	github.com/teris-io/shortid v0.0.0-20201117134242-e59966efd125
 	google.golang.org/grpc v1.46.2
 )
 
