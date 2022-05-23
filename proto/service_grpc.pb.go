@@ -22,10 +22,10 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CarServiceClient interface {
-	CreateItem(ctx context.Context, in *ItemRequest, opts ...grpc.CallOption) (*ItemResponse, error)
-	GetItem(ctx context.Context, in *ItemID, opts ...grpc.CallOption) (*ItemResponse, error)
-	UpdateItem(ctx context.Context, in *ItemRequest, opts ...grpc.CallOption) (*ItemResponse, error)
-	DeleteItem(ctx context.Context, in *ItemID, opts ...grpc.CallOption) (*ItemMessageResponse, error)
+	CreateCar(ctx context.Context, in *CarRequest, opts ...grpc.CallOption) (*CarResponse, error)
+	GetCar(ctx context.Context, in *CarID, opts ...grpc.CallOption) (*CarResponse, error)
+	UpdateCar(ctx context.Context, in *CarRequest, opts ...grpc.CallOption) (*CarResponse, error)
+	DeleteCar(ctx context.Context, in *CarID, opts ...grpc.CallOption) (*CarMessageResponse, error)
 }
 
 type carServiceClient struct {
@@ -36,36 +36,36 @@ func NewCarServiceClient(cc grpc.ClientConnInterface) CarServiceClient {
 	return &carServiceClient{cc}
 }
 
-func (c *carServiceClient) CreateItem(ctx context.Context, in *ItemRequest, opts ...grpc.CallOption) (*ItemResponse, error) {
-	out := new(ItemResponse)
-	err := c.cc.Invoke(ctx, "/CarService/CreateItem", in, out, opts...)
+func (c *carServiceClient) CreateCar(ctx context.Context, in *CarRequest, opts ...grpc.CallOption) (*CarResponse, error) {
+	out := new(CarResponse)
+	err := c.cc.Invoke(ctx, "/CarService/CreateCar", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *carServiceClient) GetItem(ctx context.Context, in *ItemID, opts ...grpc.CallOption) (*ItemResponse, error) {
-	out := new(ItemResponse)
-	err := c.cc.Invoke(ctx, "/CarService/GetItem", in, out, opts...)
+func (c *carServiceClient) GetCar(ctx context.Context, in *CarID, opts ...grpc.CallOption) (*CarResponse, error) {
+	out := new(CarResponse)
+	err := c.cc.Invoke(ctx, "/CarService/GetCar", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *carServiceClient) UpdateItem(ctx context.Context, in *ItemRequest, opts ...grpc.CallOption) (*ItemResponse, error) {
-	out := new(ItemResponse)
-	err := c.cc.Invoke(ctx, "/CarService/UpdateItem", in, out, opts...)
+func (c *carServiceClient) UpdateCar(ctx context.Context, in *CarRequest, opts ...grpc.CallOption) (*CarResponse, error) {
+	out := new(CarResponse)
+	err := c.cc.Invoke(ctx, "/CarService/UpdateCar", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *carServiceClient) DeleteItem(ctx context.Context, in *ItemID, opts ...grpc.CallOption) (*ItemMessageResponse, error) {
-	out := new(ItemMessageResponse)
-	err := c.cc.Invoke(ctx, "/CarService/DeleteItem", in, out, opts...)
+func (c *carServiceClient) DeleteCar(ctx context.Context, in *CarID, opts ...grpc.CallOption) (*CarMessageResponse, error) {
+	out := new(CarMessageResponse)
+	err := c.cc.Invoke(ctx, "/CarService/DeleteCar", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,10 +76,10 @@ func (c *carServiceClient) DeleteItem(ctx context.Context, in *ItemID, opts ...g
 // All implementations must embed UnimplementedCarServiceServer
 // for forward compatibility
 type CarServiceServer interface {
-	CreateItem(context.Context, *ItemRequest) (*ItemResponse, error)
-	GetItem(context.Context, *ItemID) (*ItemResponse, error)
-	UpdateItem(context.Context, *ItemRequest) (*ItemResponse, error)
-	DeleteItem(context.Context, *ItemID) (*ItemMessageResponse, error)
+	CreateCar(context.Context, *CarRequest) (*CarResponse, error)
+	GetCar(context.Context, *CarID) (*CarResponse, error)
+	UpdateCar(context.Context, *CarRequest) (*CarResponse, error)
+	DeleteCar(context.Context, *CarID) (*CarMessageResponse, error)
 	mustEmbedUnimplementedCarServiceServer()
 }
 
@@ -87,17 +87,17 @@ type CarServiceServer interface {
 type UnimplementedCarServiceServer struct {
 }
 
-func (UnimplementedCarServiceServer) CreateItem(context.Context, *ItemRequest) (*ItemResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateItem not implemented")
+func (UnimplementedCarServiceServer) CreateCar(context.Context, *CarRequest) (*CarResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCar not implemented")
 }
-func (UnimplementedCarServiceServer) GetItem(context.Context, *ItemID) (*ItemResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetItem not implemented")
+func (UnimplementedCarServiceServer) GetCar(context.Context, *CarID) (*CarResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCar not implemented")
 }
-func (UnimplementedCarServiceServer) UpdateItem(context.Context, *ItemRequest) (*ItemResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateItem not implemented")
+func (UnimplementedCarServiceServer) UpdateCar(context.Context, *CarRequest) (*CarResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCar not implemented")
 }
-func (UnimplementedCarServiceServer) DeleteItem(context.Context, *ItemID) (*ItemMessageResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteItem not implemented")
+func (UnimplementedCarServiceServer) DeleteCar(context.Context, *CarID) (*CarMessageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCar not implemented")
 }
 func (UnimplementedCarServiceServer) mustEmbedUnimplementedCarServiceServer() {}
 
@@ -112,74 +112,74 @@ func RegisterCarServiceServer(s grpc.ServiceRegistrar, srv CarServiceServer) {
 	s.RegisterService(&CarService_ServiceDesc, srv)
 }
 
-func _CarService_CreateItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ItemRequest)
+func _CarService_CreateCar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CarRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CarServiceServer).CreateItem(ctx, in)
+		return srv.(CarServiceServer).CreateCar(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/CarService/CreateItem",
+		FullMethod: "/CarService/CreateCar",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CarServiceServer).CreateItem(ctx, req.(*ItemRequest))
+		return srv.(CarServiceServer).CreateCar(ctx, req.(*CarRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CarService_GetItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ItemID)
+func _CarService_GetCar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CarID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CarServiceServer).GetItem(ctx, in)
+		return srv.(CarServiceServer).GetCar(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/CarService/GetItem",
+		FullMethod: "/CarService/GetCar",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CarServiceServer).GetItem(ctx, req.(*ItemID))
+		return srv.(CarServiceServer).GetCar(ctx, req.(*CarID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CarService_UpdateItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ItemRequest)
+func _CarService_UpdateCar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CarRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CarServiceServer).UpdateItem(ctx, in)
+		return srv.(CarServiceServer).UpdateCar(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/CarService/UpdateItem",
+		FullMethod: "/CarService/UpdateCar",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CarServiceServer).UpdateItem(ctx, req.(*ItemRequest))
+		return srv.(CarServiceServer).UpdateCar(ctx, req.(*CarRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CarService_DeleteItem_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ItemID)
+func _CarService_DeleteCar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CarID)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CarServiceServer).DeleteItem(ctx, in)
+		return srv.(CarServiceServer).DeleteCar(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/CarService/DeleteItem",
+		FullMethod: "/CarService/DeleteCar",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CarServiceServer).DeleteItem(ctx, req.(*ItemID))
+		return srv.(CarServiceServer).DeleteCar(ctx, req.(*CarID))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -192,20 +192,20 @@ var CarService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CarServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateItem",
-			Handler:    _CarService_CreateItem_Handler,
+			MethodName: "CreateCar",
+			Handler:    _CarService_CreateCar_Handler,
 		},
 		{
-			MethodName: "GetItem",
-			Handler:    _CarService_GetItem_Handler,
+			MethodName: "GetCar",
+			Handler:    _CarService_GetCar_Handler,
 		},
 		{
-			MethodName: "UpdateItem",
-			Handler:    _CarService_UpdateItem_Handler,
+			MethodName: "UpdateCar",
+			Handler:    _CarService_UpdateCar_Handler,
 		},
 		{
-			MethodName: "DeleteItem",
-			Handler:    _CarService_DeleteItem_Handler,
+			MethodName: "DeleteCar",
+			Handler:    _CarService_DeleteCar_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

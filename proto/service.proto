@@ -3,27 +3,27 @@ syntax = "proto3";
 option go_package = "github.com/AntonyIS/go-grpc-crud/proto";
 
 service CarService {
-    rpc CreateItem (ItemRequest) returns (ItemResponse) {}
-    rpc GetItem (ItemID) returns (ItemResponse) {}
-    rpc UpdateItem (ItemRequest) returns (ItemResponse) {}
-    rpc DeleteItem (ItemID) returns (ItemMessageResponse) {}
+    rpc CreateCar (CarRequest) returns (CarResponse) {}
+    rpc GetCar (CarID) returns (CarResponse) {}
+    rpc UpdateCar (CarRequest) returns (CarResponse) {}
+    rpc DeleteCar (CarID) returns (CarMessageResponse) {}
 }
 
 
-message ItemRequest {
+message CarRequest {
     string name = 1;
     string description = 2;
 }
-message ItemResponse {
+message CarResponse {
     string name = 1;
     string description = 2;
     string id = 3;
 }
 
-message ItemID {
+message CarID {
     string id = 1;
 }
 
-message ItemMessageResponse {
+message CarMessageResponse {
     string message = 1;
 }

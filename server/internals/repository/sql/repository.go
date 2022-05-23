@@ -3,6 +3,7 @@ package sql
 import (
 	"database/sql"
 	"fmt"
+	"log"
 
 	"github.com/AntonyIS/go-grpc-crud/server/internals/domain"
 )
@@ -48,7 +49,11 @@ func (sql sqlRepository) CreateCar(car *domain.Car) (*domain.Car, error) {
 }
 
 func (sql sqlRepository) GetCars() (*[]domain.Car, error) {
-	query, err := sql.db.Query(fmt.Sprintf("SELECT * FROM %v ORDER by DESC", sql.tablename))
+	query, err := sql.db.Query(fmt.Sprintf("SELECT * FROM %v", sql.tablename))
+
+	if err != nil {
+		log.Fatalf("Error : %v", err)
+	}
 	car := domain.Car{}
 	cars := []domain.Car{}
 
