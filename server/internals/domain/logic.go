@@ -2,7 +2,6 @@ package domain
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/teris-io/shortid"
 )
@@ -23,7 +22,7 @@ func NewCarService(carRepo CarRepository) CarService {
 }
 
 func (cs *carService) CreateCar(car *Car) (*Car, error) {
-	car.ID = fmt.Sprintf("%s%s", shortid.MustGenerate())
+	car.ID = shortid.MustGenerate()
 	return cs.carRepo.CreateCar(car)
 }
 
