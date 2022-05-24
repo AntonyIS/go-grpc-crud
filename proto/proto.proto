@@ -1,0 +1,32 @@
+syntax="proto3";
+
+option go_package = "./";
+
+package proto;
+
+service MovieService{
+    rpc CreateMovie(MovieRequest) returns (MovieResponse) {}
+    rpc GetMovie(MovieID) returns (MovieResponse) {}
+    rpc UpdateMovie(MovieRequest) returns (MovieResponse) {}
+    rpc DeleteMovie(MovieID) returns (MovieRequest) {}
+}
+
+message MovieRequest {
+    string id = 1;
+	string name = 2;
+	string description=3;
+	string release_date= 4;
+	string image = 5;
+}
+
+message MovieResponse {
+    string id = 1;
+	string name = 2;
+	string description=3;
+	string release_date= 4;
+	string image = 5;
+}
+
+message MovieID {
+    string id = 1;
+}

@@ -13,8 +13,7 @@ func NewMovieService(movieRepo MovieRepository) MovieService {
 }
 
 func (ms movieService) CreateMovie(movie *Movie) (*Movie, error) {
-	m := Movie{}
-	m.ID = shortid.MustGenerate()
+	movie.ID = shortid.MustGenerate()
 	return ms.movieRepo.CreateMovie(movie)
 }
 
