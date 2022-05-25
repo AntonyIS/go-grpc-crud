@@ -25,7 +25,7 @@ type MovieServiceClient interface {
 	CreateMovie(ctx context.Context, in *MovieRequest, opts ...grpc.CallOption) (*MovieResponse, error)
 	GetMovie(ctx context.Context, in *MovieID, opts ...grpc.CallOption) (*MovieResponse, error)
 	UpdateMovie(ctx context.Context, in *MovieRequest, opts ...grpc.CallOption) (*MovieResponse, error)
-	DeleteMovie(ctx context.Context, in *MovieID, opts ...grpc.CallOption) (*MovieRequest, error)
+	DeleteMovie(ctx context.Context, in *MovieID, opts ...grpc.CallOption) (*Message, error)
 }
 
 type movieServiceClient struct {
@@ -63,8 +63,8 @@ func (c *movieServiceClient) UpdateMovie(ctx context.Context, in *MovieRequest, 
 	return out, nil
 }
 
-func (c *movieServiceClient) DeleteMovie(ctx context.Context, in *MovieID, opts ...grpc.CallOption) (*MovieRequest, error) {
-	out := new(MovieRequest)
+func (c *movieServiceClient) DeleteMovie(ctx context.Context, in *MovieID, opts ...grpc.CallOption) (*Message, error) {
+	out := new(Message)
 	err := c.cc.Invoke(ctx, "/proto.MovieService/DeleteMovie", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -79,7 +79,7 @@ type MovieServiceServer interface {
 	CreateMovie(context.Context, *MovieRequest) (*MovieResponse, error)
 	GetMovie(context.Context, *MovieID) (*MovieResponse, error)
 	UpdateMovie(context.Context, *MovieRequest) (*MovieResponse, error)
-	DeleteMovie(context.Context, *MovieID) (*MovieRequest, error)
+	DeleteMovie(context.Context, *MovieID) (*Message, error)
 	mustEmbedUnimplementedMovieServiceServer()
 }
 
@@ -96,7 +96,7 @@ func (UnimplementedMovieServiceServer) GetMovie(context.Context, *MovieID) (*Mov
 func (UnimplementedMovieServiceServer) UpdateMovie(context.Context, *MovieRequest) (*MovieResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateMovie not implemented")
 }
-func (UnimplementedMovieServiceServer) DeleteMovie(context.Context, *MovieID) (*MovieRequest, error) {
+func (UnimplementedMovieServiceServer) DeleteMovie(context.Context, *MovieID) (*Message, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMovie not implemented")
 }
 func (UnimplementedMovieServiceServer) mustEmbedUnimplementedMovieServiceServer() {}

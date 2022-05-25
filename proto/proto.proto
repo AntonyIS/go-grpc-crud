@@ -8,7 +8,7 @@ service MovieService{
     rpc CreateMovie(MovieRequest) returns (MovieResponse) {}
     rpc GetMovie(MovieID) returns (MovieResponse) {}
     rpc UpdateMovie(MovieRequest) returns (MovieResponse) {}
-    rpc DeleteMovie(MovieID) returns (MovieRequest) {}
+    rpc DeleteMovie(MovieID) returns (Message) {}
 }
 
 message MovieRequest {
@@ -29,4 +29,8 @@ message MovieResponse {
 
 message MovieID {
     string id = 1;
+}
+
+message Message {
+	string message = 1;
 }
