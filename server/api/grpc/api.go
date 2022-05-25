@@ -92,5 +92,5 @@ func (s *Server) DeleteMovie(ctx context.Context, in *pb.MovieID) (*pb.Message, 
 		return nil, nil
 	}
 
-	return &pb.Message{Message: fmt.Sprintf("movie with id %s deleted", id)}, nil
+	return &pb.Message{Message: fmt.Sprintf("movie with id %s deleted successuly", id)}, nil
 }
