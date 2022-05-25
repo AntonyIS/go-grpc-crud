@@ -64,7 +64,7 @@ func (handler) CreateMovie(ctx *gin.Context) {
 		ReleaseDate: movie.ReleaseDate,
 		Image:       movie.Image,
 	})
-	fmt.Println(err)
+
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"error": fmt.Sprintf("Error: %s", err.Error()),
@@ -91,12 +91,13 @@ func (handler) GetMovie(ctx *gin.Context) {
 		})
 		return
 	}
+
 	movie := make(map[string]string)
 	movie["id"] = res.GetId()
 	movie["name"] = res.GetName()
 	movie["description"] = res.GetDescription()
 	movie["release_date"] = res.GetReleaseDate()
-	movie["image"] = res.GetReleaseDate()
+	movie["image"] = res.GetImage()
 	ctx.JSON(http.StatusOK, movie)
 }
 

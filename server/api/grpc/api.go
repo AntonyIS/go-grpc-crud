@@ -50,7 +50,7 @@ func (s *Server) GetMovie(ctx context.Context, in *pb.MovieID) (*pb.MovieRespons
 		return &pb.MovieResponse{}, status.Error(404, "movie not found")
 	}
 
-	return &pb.MovieResponse{Id: id, Name: movie.ID, Description: movie.Description, ReleaseDate: movie.ReleaseDate, Image: movie.Image}, nil
+	return &pb.MovieResponse{Id: id, Name: movie.Name, Description: movie.Description, ReleaseDate: movie.ReleaseDate, Image: movie.Image}, nil
 }
 func (s *Server) GetMovies(ctx context.Context, in *pb.EmptyRequest) (*pb.MovieListResponse, error) {
 
@@ -59,39 +59,37 @@ func (s *Server) GetMovies(ctx context.Context, in *pb.EmptyRequest) (*pb.MovieL
 	if err != nil {
 		return nil, nil
 	}
-	movies, err := db.GetMovies()
+	srv := domain.NewMovieService(db)
+	movies, err := srv.GetMovies()
+	fmt.Println(movies)
 
 	if err != nil {
 		return &pb.MovieListResponse{}, status.Error(404, "movies not found")
 	}
 
-	return &pb.MovieListResponse{Movies: movies}, nil
+	return &pb.MovieListResponse{}, nil
 }
 
 func (s *Server) UpdateMovie(ctx context.Context, in *pb.MovieRequest) (*pb.MovieResponse, error) {
-	id := in.GetId()
-	name := in.GetName()
-	description := in.GetDescription()
-	release_date := in.GetReleaseDate()
-	image := in.GetImage()
 
 	db, err := repo.NewPostgresRepository()
+	srv := domain.NewMovieService(db)
 	if err != nil {
 		return nil, nil
 	}
 	movie := domain.Movie{
-		ID:          id,
-		Name:        name,
-		Description: description,
-		ReleaseDate: release_date,
-		Image:       image,
+		ID:          in.GetId(),
+		Name:        in.GetName(),
+		Description: in.GetDescription(),
+		ReleaseDate: in.GetReleaseDate(),
+		Image:       in.GetImage(),
 	}
-	_, err = db.UpdateMovie(&movie)
+	_, err = srv.UpdateMovie(&movie)
 	if err != nil {
 		return nil, nil
 	}
 
-	return &pb.MovieResponse{Id: id, Name: name, Description: description, ReleaseDate: release_date, Image: image}, nil
+	return &pb.MovieResponse{Id: movie.ID, Name: movie.Name, Description: movie.Description, ReleaseDate: movie.ReleaseDate, Image: movie.Image}, nil
 }
 
 func (s *Server) DeleteMovie(ctx context.Context, in *pb.MovieID) (*pb.Message, error) {
@@ -101,7 +99,8 @@ func (s *Server) DeleteMovie(ctx context.Context, in *pb.MovieID) (*pb.Message, 
 	if err != nil {
 		return nil, nil
 	}
-	err = db.DeleteMovie(id)
+	srv := domain.NewMovieService(db)
+	err = srv.DeleteMovie(id)
 	if err != nil {
 		return nil, nil
 	}
