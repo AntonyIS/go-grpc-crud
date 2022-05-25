@@ -32,7 +32,7 @@ func gRPCClient() (pb.MovieServiceClient, error) {
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
-	defer conn.Close()
+
 	client := pb.NewMovieServiceClient(conn)
 
 	return client, nil
@@ -64,6 +64,7 @@ func (handler) CreateMovie(ctx *gin.Context) {
 		ReleaseDate: movie.ReleaseDate,
 		Image:       movie.Image,
 	})
+	fmt.Println(err)
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"error": fmt.Sprintf("Error: %s", err.Error()),
@@ -79,14 +80,14 @@ func (handler) GetMovie(ctx *gin.Context) {
 	client, err := gRPCClient()
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{
-			"error": fmt.Sprintf("Error: %s", err.Error()),
+			"error": fmt.Sprintf("Error: %s", err),
 		})
 		return
 	}
 	res, err := client.GetMovie(ctx, &pb.MovieID{Id: id})
 	if err != nil {
 		ctx.JSON(http.StatusNotFound, gin.H{
-			"error": fmt.Sprintf("Error: %s", err.Error()),
+			"errors": "Movie not found",
 		})
 		return
 	}
@@ -100,9 +101,22 @@ func (handler) GetMovie(ctx *gin.Context) {
 }
 
 func (handler) GetMovies(ctx *gin.Context) {
-	ctx.JSON(http.StatusNotFound, gin.H{
-		"message": "No movies",
-	})
+	client, err := gRPCClient()
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"error": fmt.Sprintf("Error: %s", err.Error()),
+		})
+		return
+	}
+	res, err := client.GetMovies(ctx, &pb.EmptyRequest{})
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{
+			"error": fmt.Sprintf("Error: %s", err.Error()),
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, res.Movies)
+
 }
 
 func (handler) UpdateMovie(ctx *gin.Context) {

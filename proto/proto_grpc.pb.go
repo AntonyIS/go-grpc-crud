@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type MovieServiceClient interface {
 	CreateMovie(ctx context.Context, in *MovieRequest, opts ...grpc.CallOption) (*MovieResponse, error)
 	GetMovie(ctx context.Context, in *MovieID, opts ...grpc.CallOption) (*MovieResponse, error)
+	GetMovies(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*MovieListResponse, error)
 	UpdateMovie(ctx context.Context, in *MovieRequest, opts ...grpc.CallOption) (*MovieResponse, error)
 	DeleteMovie(ctx context.Context, in *MovieID, opts ...grpc.CallOption) (*Message, error)
 }
@@ -54,6 +55,15 @@ func (c *movieServiceClient) GetMovie(ctx context.Context, in *MovieID, opts ...
 	return out, nil
 }
 
+func (c *movieServiceClient) GetMovies(ctx context.Context, in *EmptyRequest, opts ...grpc.CallOption) (*MovieListResponse, error) {
+	out := new(MovieListResponse)
+	err := c.cc.Invoke(ctx, "/proto.MovieService/GetMovies", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *movieServiceClient) UpdateMovie(ctx context.Context, in *MovieRequest, opts ...grpc.CallOption) (*MovieResponse, error) {
 	out := new(MovieResponse)
 	err := c.cc.Invoke(ctx, "/proto.MovieService/UpdateMovie", in, out, opts...)
@@ -78,6 +88,7 @@ func (c *movieServiceClient) DeleteMovie(ctx context.Context, in *MovieID, opts 
 type MovieServiceServer interface {
 	CreateMovie(context.Context, *MovieRequest) (*MovieResponse, error)
 	GetMovie(context.Context, *MovieID) (*MovieResponse, error)
+	GetMovies(context.Context, *EmptyRequest) (*MovieListResponse, error)
 	UpdateMovie(context.Context, *MovieRequest) (*MovieResponse, error)
 	DeleteMovie(context.Context, *MovieID) (*Message, error)
 	mustEmbedUnimplementedMovieServiceServer()
@@ -92,6 +103,9 @@ func (UnimplementedMovieServiceServer) CreateMovie(context.Context, *MovieReques
 }
 func (UnimplementedMovieServiceServer) GetMovie(context.Context, *MovieID) (*MovieResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMovie not implemented")
+}
+func (UnimplementedMovieServiceServer) GetMovies(context.Context, *EmptyRequest) (*MovieListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMovies not implemented")
 }
 func (UnimplementedMovieServiceServer) UpdateMovie(context.Context, *MovieRequest) (*MovieResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateMovie not implemented")
@@ -148,6 +162,24 @@ func _MovieService_GetMovie_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MovieService_GetMovies_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MovieServiceServer).GetMovies(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.MovieService/GetMovies",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MovieServiceServer).GetMovies(ctx, req.(*EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MovieService_UpdateMovie_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MovieRequest)
 	if err := dec(in); err != nil {
@@ -198,6 +230,10 @@ var MovieService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMovie",
 			Handler:    _MovieService_GetMovie_Handler,
+		},
+		{
+			MethodName: "GetMovies",
+			Handler:    _MovieService_GetMovies_Handler,
 		},
 		{
 			MethodName: "UpdateMovie",

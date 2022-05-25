@@ -1,6 +1,8 @@
 package domain
 
-import "github.com/teris-io/shortid"
+import (
+	"github.com/teris-io/shortid"
+)
 
 type movieService struct {
 	movieRepo MovieRepository
@@ -13,6 +15,7 @@ func NewMovieService(movieRepo MovieRepository) MovieService {
 }
 
 func (ms movieService) CreateMovie(movie *Movie) (*Movie, error) {
+
 	movie.ID = shortid.MustGenerate()
 	return ms.movieRepo.CreateMovie(movie)
 }

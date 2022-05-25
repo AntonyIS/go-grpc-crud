@@ -7,6 +7,7 @@ package proto;
 service MovieService{
     rpc CreateMovie(MovieRequest) returns (MovieResponse) {}
     rpc GetMovie(MovieID) returns (MovieResponse) {}
+	rpc GetMovies(EmptyRequest) returns (MovieListResponse) {}
     rpc UpdateMovie(MovieRequest) returns (MovieResponse) {}
     rpc DeleteMovie(MovieID) returns (Message) {}
 }
@@ -26,7 +27,9 @@ message MovieResponse {
 	string release_date= 4;
 	string image = 5;
 }
-
+message MovieListResponse {
+    repeated MovieResponse movies = 2;
+}
 message MovieID {
     string id = 1;
 }
@@ -34,3 +37,4 @@ message MovieID {
 message Message {
 	string message = 1;
 }
+message EmptyRequest {}
