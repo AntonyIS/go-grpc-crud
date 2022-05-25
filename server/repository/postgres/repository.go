@@ -50,10 +50,25 @@ func NewPostgresRepository() (domain.MovieRepository, error) {
 	return repo, nil
 
 }
-func (repo postgresRepository) CreateMovie(movie domain.Movie) (*domain.Movie, error) {
+func (repo postgresRepository) CreateMovie(movie *domain.Movie) (*domain.Movie, error) {
 	defer repo.db.Close()
-	sqlStatement := `INSERT INTO movies (id,name, description,release_date, image) VALUES ($1, $2, $3, $4, $5)`
-	err := repo.db.QueryRow(sqlStatement, movie.ID, movie.Name, movie.Description, movie.ReleaseDate)
+
+	insert := fmt.Sprintf("INSERT INTO %s values ('%s','%s','%s','%s','%s')", repo.tableName, movie.ID, movie.Name, movie.Description, movie.ReleaseDate, movie.Image)
+	_, err := repo.db.Exec(insert)
+
+	if err != nil {
+		return nil, err
+	}
+	return movie, nil
+}
+
+func (repo postgresRepository) GetMovie(id string) (*domain.Movie, error) {
+	defer repo.db.Close()
+	movie := domain.Movie{}
+	query := fmt.Sprintf("SELECT * FROM %s WHERE id=$1", repo.tableName)
+	row := repo.db.QueryRow(query, id)
+
+	err := row.Scan(&movie.ID, &movie.Name, &movie.Description, &movie.ReleaseDate, &movie.Image)
 
 	if err != nil {
 		return nil, err
@@ -61,21 +76,50 @@ func (repo postgresRepository) CreateMovie(movie domain.Movie) (*domain.Movie, e
 	return &movie, nil
 }
 
-func (repo postgresRepository) GetMovie(id string) (*domain.Movie, error) {
-	defer repo.db.Close()
-	movie := *&domain.Movie{}
-	sqlStatement := `SELECT * FROM movies WHERE userid=$1`
-	row := repo.db.QueryRow(sqlStatement, id)
-	err := row.Scan(&movie.ID, &movie.Name, &movie.Description, &movie.Image)
+func (repo postgresRepository) GetMovies() (*[]domain.Movie, error) {
 
-	switch err {
-	case sql.ErrNoRows:
-		fmt.Println("No rows were returned!")
-		return &movie, nil
-	case nil:
-		return &movie, nil
-	default:
-		log.Fatalf("Unable to scan the row. %v", err)
+	query := fmt.Sprint("SELECT * FTOM %s", repo.tableName)
+
+	rows, err := repo.db.Query(query)
+
+	if err != nil {
+		return nil, err
 	}
-	return &movie, nil
+	repo.db.Close()
+	movies := []domain.Movie{}
+
+	for rows.Next() {
+		movie := domain.Movie{}
+
+		err := rows.Scan(&movie.ID, &movie.Name, &movie.Description, &movie.ReleaseDate, &movie.Image)
+		if err != nil {
+			return nil, err
+		}
+		movies = append(movies, movie)
+	}
+
+	return &movies, nil
+}
+
+func (repo postgresRepository) UpdateMovie(movie *domain.Movie) (*domain.Movie, error) {
+	defer repo.db.Close()
+	update := fmt.Sprintf(" `UPDATE %s SET name=$2 description=$3 release_date=$4 image=$5 WHERE id=$1`", repo.tableName)
+	_, err := repo.db.Exec(update, movie.ID, movie.Name, movie.Description, movie.Image)
+
+	if err != nil {
+		return nil, err
+	}
+	return movie, nil
+
+}
+
+func (repo postgresRepository) DeleteMovie(id string) error {
+	defer repo.db.Close()
+	del := fmt.Sprintf("DELETE FROM %s WHERE id=$1")
+
+	_, err := repo.db.Exec(del, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
