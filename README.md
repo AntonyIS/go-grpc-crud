@@ -5,5 +5,5 @@ A simpe CRUD application making use of the Hexagonal architecture. Technologies 
 * gRPC
 * PostgresDB
 * Redis (Coming soon)
-* REST 
+* Server side REST (Coming soon)
 * Docker (Coming soon)

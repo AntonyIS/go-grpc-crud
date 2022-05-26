@@ -44,7 +44,7 @@ func NewPostgresRepository() (domain.MovieRepository, error) {
 
 }
 func (repo postgresRepository) CreateMovie(movie *domain.Movie) (*domain.Movie, error) {
-	fmt.Println(movie)
+
 	if err := repo.db.Create(&movie).Error; err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (repo postgresRepository) GetMovies() (*[]domain.Movie, error) {
 
 func (repo postgresRepository) UpdateMovie(movie *domain.Movie) (*domain.Movie, error) {
 	if result := repo.db.Save(movie); result.Error != nil {
-		fmt.Println(result.Error)
+
 		return nil, result.Error
 	}
 	return movie, nil
@@ -80,10 +80,11 @@ func (repo postgresRepository) UpdateMovie(movie *domain.Movie) (*domain.Movie, 
 func (repo postgresRepository) DeleteMovie(id string) error {
 	movie := domain.Movie{}
 
-	if result := repo.db.First(&movie, id); result.Error != nil {
+	if result := repo.db.First(&movie); result.Error != nil {
+		fmt.Println(result.Error)
 		return result.Error
 	}
 
-	repo.db.Delete(&movie)
+	repo.db.Delete(movie, id)
 	return nil
 }
