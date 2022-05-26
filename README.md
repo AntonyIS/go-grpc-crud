@@ -3,7 +3,7 @@
 A simpe CRUD application making use of the Hexagonal architecture. Technologies used are :
 * Go language
 * gRPC
+* Server side REST 
 * PostgresDB
 * Redis (Coming soon)
-* Server side REST (Coming soon)
 * Docker (Coming soon)
