@@ -2,12 +2,10 @@ package grpc
 
 import (
 	"context"
-	"fmt"
-	"log"
 
 	pb "github.com/AntonyIS/go-grpc-crud/proto"
+	srv "github.com/AntonyIS/go-grpc-crud/server/api"
 	"github.com/AntonyIS/go-grpc-crud/server/domain"
-	repo "github.com/AntonyIS/go-grpc-crud/server/repository/postgres"
 	"google.golang.org/grpc/status"
 )
 
@@ -17,7 +15,7 @@ type Server struct {
 
 func (s *Server) CreateMovie(ctx context.Context, in *pb.MovieRequest) (*pb.MovieResponse, error) {
 
-	srv := *service()
+	srv := *srv.Service()
 	movie := domain.Movie{
 		Name:        in.GetName(),
 		Description: in.GetDescription(),
@@ -36,7 +34,7 @@ func (s *Server) CreateMovie(ctx context.Context, in *pb.MovieRequest) (*pb.Movi
 func (s *Server) GetMovie(ctx context.Context, in *pb.MovieID) (*pb.MovieResponse, error) {
 
 	id := in.GetId()
-	srv := *service()
+	srv := *srv.Service()
 	movie, err := srv.GetMovie(id)
 
 	if err != nil {
@@ -47,7 +45,7 @@ func (s *Server) GetMovie(ctx context.Context, in *pb.MovieID) (*pb.MovieRespons
 }
 func (s *Server) GetMovies(ctx context.Context, in *pb.EmptyRequest) (*pb.MovieListResponse, error) {
 
-	srv := *service()
+	srv := *srv.Service()
 	movies, err := srv.GetMovies()
 	if err != nil {
 		return &pb.MovieListResponse{}, status.Error(404, "movies not found")
@@ -61,7 +59,7 @@ func (s *Server) GetMovies(ctx context.Context, in *pb.EmptyRequest) (*pb.MovieL
 
 func (s *Server) UpdateMovie(ctx context.Context, in *pb.MovieRequest) (*pb.MovieResponse, error) {
 
-	srv := *service()
+	srv := *srv.Service()
 	movie := domain.Movie{
 		ID:          in.GetId(),
 		Name:        in.GetName(),
@@ -79,22 +77,11 @@ func (s *Server) UpdateMovie(ctx context.Context, in *pb.MovieRequest) (*pb.Movi
 
 func (s *Server) DeleteMovie(ctx context.Context, in *pb.MovieID) (*pb.Message, error) {
 	id := in.GetId()
-	srv := *service()
+	srv := *srv.Service()
 	err := srv.DeleteMovie(id)
 	if err != nil {
 		return nil, nil
 	}
 
-	return &pb.Message{Message: fmt.Sprintf("movie with id %s deleted successuly", id)}, nil
-}
-
-func service() *domain.MovieService {
-	db, err := repo.NewPostgresRepository()
-
-	if err != nil {
-		log.Fatalf("unable to access service %v", err)
-	}
-	srv := domain.NewMovieService(db)
-
-	return &srv
+	return &pb.Message{Message: "movie with deleted successuly"}, nil
 }

@@ -43,7 +43,7 @@ func NewPostgresRepository() (domain.MovieRepository, error) {
 	return repo, nil
 
 }
-func (repo postgresRepository) CreateMovie(movie *domain.Movie) (*domain.Movie, error) {
+func (repo *postgresRepository) CreateMovie(movie *domain.Movie) (*domain.Movie, error) {
 
 	if err := repo.db.Create(&movie).Error; err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (repo postgresRepository) CreateMovie(movie *domain.Movie) (*domain.Movie, 
 	return movie, nil
 }
 
-func (repo postgresRepository) GetMovie(id string) (*domain.Movie, error) {
+func (repo *postgresRepository) GetMovie(id string) (*domain.Movie, error) {
 	movie := domain.Movie{}
 	if result := repo.db.Find(&movie); result.Error != nil {
 		return nil, result.Error
@@ -59,7 +59,7 @@ func (repo postgresRepository) GetMovie(id string) (*domain.Movie, error) {
 	return &movie, nil
 }
 
-func (repo postgresRepository) GetMovies() (*[]domain.Movie, error) {
+func (repo *postgresRepository) GetMovies() (*[]domain.Movie, error) {
 	movies := []domain.Movie{}
 	if result := repo.db.Find(&movies); result.Error != nil {
 		fmt.Println(result.Error)
@@ -68,7 +68,7 @@ func (repo postgresRepository) GetMovies() (*[]domain.Movie, error) {
 	return &movies, nil
 }
 
-func (repo postgresRepository) UpdateMovie(movie *domain.Movie) (*domain.Movie, error) {
+func (repo *postgresRepository) UpdateMovie(movie *domain.Movie) (*domain.Movie, error) {
 	if result := repo.db.Save(movie); result.Error != nil {
 
 		return nil, result.Error
@@ -77,14 +77,16 @@ func (repo postgresRepository) UpdateMovie(movie *domain.Movie) (*domain.Movie, 
 
 }
 
-func (repo postgresRepository) DeleteMovie(id string) error {
+func (repo *postgresRepository) DeleteMovie(id string) error {
 	movie := domain.Movie{}
-
-	if result := repo.db.First(&movie); result.Error != nil {
-		fmt.Println(result.Error)
+	if result := repo.db.Find(&movie); result.Error != nil {
 		return result.Error
 	}
+	fmt.Println(id)
+	if err := repo.db.Where("id = ? ", id).Delete(&movie).Error; err != nil {
 
-	repo.db.Delete(movie, id)
+		return err
+	}
 	return nil
+
 }
