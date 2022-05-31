@@ -1,0 +1,46 @@
+version: '3'
+services:
+  movie_server:
+    container_name: movie_server
+    build: ./server
+    ports: 
+      - 5000:5000 
+    restart: on-failure
+    volumes:
+      - api:/usr/src/app/
+    networks:
+      - service-network
+
+  movie_client:
+    container_name: movie_client
+    build: ./client
+    ports: 
+      - 5001:5001 
+    restart: on-failure
+    volumes:
+      - api:/usr/src/app/
+    networks:
+      - service-network
+
+  postgres:
+    image: postgres:latest
+    container_name: postgresDB
+    environment:
+      - POSTGRES_USER=${DB_USER}  
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - DATABASE_HOST=${DB_HOST} 
+    ports:
+      - '5432:5432'
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - service-network
+
+volumes:
+  api:
+  database_postgres:  
+
+networks:
+  service-network:
+    driver: bridge 
